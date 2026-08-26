@@ -44,7 +44,7 @@ category_cols = ['Cities', 'Satellite urban towns', 'Independent urban towns',
 
 lea_pop_class_df = pop_class_merged_df.groupby('CSO_LEA')[category_cols].sum().reset_index()
 
-#urban index
+#urban index -> Weights that are assigned to populations living in each class of area - used to calcuate a urban score
 urban_weights = {
     'Cities': 1.0,
     'Satellite urban towns': 0.8,
@@ -60,7 +60,30 @@ lea_pop_class_df['urban_index'] = sum(
     lea_pop_class_df[category] * weight for category, weight in urban_weights.items()
 ) / lea_pop_class_df['total_population']
 
-lea_pop_class_df.to_csv('lea-urban-rural.csv', index=False)
+#Main dataframe -> Merging other data and cleaning
+lea_df = pd.read_csv("census-22-saps/saps-lea.csv", encoding="latin1")
+lea_boundaries_df = pd.read_csv("boundary-data-22/lea-geo-boundaries.csv")
 
+lea_df["GEOGID"] = lea_df["GEOGID"].astype(str)
+lea_boundaries_df["LEA_ID"] = lea_boundaries_df["LEA_ID"].astype(str)
 
-#lea_df = pd.read_csv("census-22-saps/saps-lea.csv", encoding="latin1")
+lea_df = lea_df.merge(
+    lea_boundaries_df[["LEA_ID", "COUNTY"]],
+    left_on="GEOGID",
+    right_on="LEA_ID",
+    how="outer",
+)
+
+lea_df = lea_df.merge(
+    lea_pop_class_df[["CSO_LEA","urban_index"]],
+    left_on="GEOGDESC",
+    right_on="CSO_LEA",
+    how="outer"
+)
+
+lea_df = lea_df.drop(columns=["GUID", "LEA_ID", "CSO_LEA"])
+lea_df = lea_df[lea_df["GEOGID"] != "Ireland"]
+
+#Glossary lookup
+glossary_df = pd.read_excel("census-22-saps/glossary.xlsx")
+print(glossary_df)

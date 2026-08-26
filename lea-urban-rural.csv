@@ -1,4 +1,4 @@
-CSO_LEA,Cities,Satellite urban towns,Independent urban towns,Rural areas with high urban influence,Rural areas with moderate urban influence,Highly rural/remote areas,total_population,urbanness_index
+CSO_LEA,Cities,Satellite urban towns,Independent urban towns,Rural areas with high urban influence,Rural areas with moderate urban influence,Highly rural/remote areas,total_population,urban_index
 ADARE-RATHKEALE,0.0,0.0,0.0,18891.0,7542.0,2415.0,28848.0,0.31422628951747095
 ARDEE,0.0,0.0,7572.0,11726.0,7380.0,210.0,26888.0,0.3983040761678072
 ARKLOW,0.0,2252.0,13316.0,8054.0,3603.0,374.0,27599.0,0.49760498568788725
