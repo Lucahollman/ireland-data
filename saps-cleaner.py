@@ -43,8 +43,24 @@ category_cols = ['Cities', 'Satellite urban towns', 'Independent urban towns',
                   'Highly rural/remote areas']
 
 lea_pop_class_df = pop_class_merged_df.groupby('CSO_LEA')[category_cols].sum().reset_index()
-lea_pop_class_df.to_csv('lea-urban-rural.csv', index=False)
 
+#urban index
+urban_weights = {
+    'Cities': 1.0,
+    'Satellite urban towns': 0.8,
+    'Independent urban towns': 0.6,
+    'Rural areas with high urban influence': 0.4,
+    'Rural areas with moderate urban influence': 0.2,
+    'Highly rural/remote areas': 0.0
+}
+
+lea_pop_class_df["total_population"] = lea_pop_class_df.select_dtypes('number').sum(axis=1)
+
+lea_pop_class_df['urban_index'] = sum(
+    lea_pop_class_df[category] * weight for category, weight in urban_weights.items()
+) / lea_pop_class_df['total_population']
+
+lea_pop_class_df.to_csv('lea-urban-rural.csv', index=False)
 
 
 #lea_df = pd.read_csv("census-22-saps/saps-lea.csv", encoding="latin1")
