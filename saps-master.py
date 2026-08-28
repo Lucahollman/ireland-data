@@ -87,10 +87,21 @@ lea_df = lea_df[lea_df["GEOGID"] != "Ireland"]
 #Glossary lookup
 glossary_df = pd.read_excel("census-22-saps/glossary.xlsx")
 
-user_column_input = ["T1_1AGE0M", "urban_index"]
-id_cols = ["GEOGID", "COUNTY", "GEOGDESC"]
-subset_cols = id_cols + user_column_input
-subset_lea_df = lea_df[subset_cols]
-print(subset_lea_df)
+user_column_input = ["Age 5 - Males"]
+real_column_input = ["urban_index"]
+column_title_subs = {}
+for index, row in glossary_df.iterrows():
+    row_desc = row["Description of Field"]
+    row_code = row["Column Names"]
+    if row_desc in user_column_input:
+        real_column_input.append(row_code)
+        column_title_subs.update({row_code: row_desc})
 
+
+id_cols = ["GEOGID", "COUNTY", "GEOGDESC"]
+subset_cols = id_cols + real_column_input
+subset_lea_df = lea_df[subset_cols]
+subset_lea_df = subset_lea_df.rename(columns=column_title_subs)
+    
+print(subset_lea_df)
 subset_lea_df.to_csv("output.csv", index=False)
